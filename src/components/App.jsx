@@ -20,7 +20,7 @@ export class App extends Component {
   }
 
   setSearch = val => {
-    if(val!=this.state.q){
+    if(val!==this.state.q){
       this.load({q:val, page:1})
 
       this.setState({
@@ -40,7 +40,7 @@ export class App extends Component {
       console.log("no load");
       return;
     }
-    if (st == undefined) st = this.state;
+    if (st === undefined) st = this.state;
     const { q, page } = st;
     this.setState({loading:true})
     axios
@@ -78,13 +78,13 @@ export class App extends Component {
         <ImageGallery images={images} openModal={this.openModal}></ImageGallery>
         {loading? (<Loader></Loader>) : images.length > 0 ? (
           <Button action={this.nextPage}></Button>
-        ) : q == '' ? (
+        ) : q === '' ? (
           'Write your promt to begin searching'
         ) : (
           'Nothing was found by your request'
         )}
         
-        {modalObj!=undefined?<Modal img = {modalObj} close={this.openModal}></Modal>:""}
+        {modalObj!==undefined?<Modal img = {modalObj} close={this.openModal}></Modal>:""}
       </div>
     );
   }
