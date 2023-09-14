@@ -1,61 +1,91 @@
 import React, { Component } from 'react';
-import ContactForm  from './ContactForm/ContactForm';
-import ContactList from './ContactList/ContactList';
-import Filter from './Filter/Filter';
+import './styles.css';
+import Searchbar from './Searchbar/Searchbar';
+import ImageGallery from './ImageGallery/ImageGallery';
+import Button from './Button/Button';
+import Modal from './Modal/Modal';
+import axios from 'axios';
+import Loader from './Loader/Loader';
 
+const key = '38473838-e891e831f166f48f183183908';
 
 export class App extends Component {
-  constructor(props){
+  constructor(props) {
     super(props);
-    this.state={
-      contacts:[],
-      filter:""
-    }
+    this.state = {
+      images: [],
+      q: '',
+      page: 1,
+    };
   }
-  // const [contacts, setContacts] = useState([]);
-  // const [filter, setFilter] = useState('');
 
-  addToContacts=(obj)=> {
-    let {contacts} = this.state;
-    let existing = contacts.filter(c => c.phone === obj.phone)[0];
-    if (existing !== undefined) {
-      alert(
-        'this number is already in your phonebook by the name ' + existing.name
-      );
-      //I find it dumb, that phonebook can`t have same names
+  setSearch = val => {
+    if(val!=this.state.q){
+      this.load({q:val, page:1})
+
+      this.setState({
+        q: val,
+        page: 1,
+        images: [],
+        loading: false,
+        modalObj:undefined
+      });
+    }
+   
+  };
+
+
+  load = st => {
+    if(this.state.loading){
+      console.log("no load");
       return;
     }
-    let copy = [...contacts];
-    copy.push(obj);
-    this.setState({contacts:copy});
+    if (st == undefined) st = this.state;
+    const { q, page } = st;
+    this.setState({loading:true})
+    axios
+      .get(
+        `https://pixabay.com/api/?q=${q}&page=${page}&key=${key}&image_type=photo&orientation=horizontal&per_page=12`
+      )
+      .then(r => r.data)
+      .then(data => {
+        let copy = [...this.state.images];
+        if(copy.includes(data.hits[0])){
+          return;
+        }
+        copy = copy.concat(data.hits);
+        this.setState({ images: copy, loading:false });
+      });
+  };
+
+  shouldComponentUpdate = (nextProps, nextState) => {
+    return nextState.images.length>0;
+  };
+  nextPage=()=>{
+    let np = this.state.page+1;
+    this.load({q:this.state.q, page: np})
+    this.setState({page:np});
   }
-  removeFromContacts=(obj) =>{
-    let copy = [...this.state.contacts];
-    copy = copy.filter(c => c.name !== obj.name && c.phone !== obj.phone);
-    this.setState({contacts:copy});
+  openModal=(h)=>{
+    console.log(h);
+    this.setState({modalObj:h})
   }
-  isOkayObj(obj) {
-    const {filter}= this.state;
-    return obj.name.toLowerCase().includes(filter.toLowerCase());
-  }
-  setFilter=(val)=>{
-    this.setState({filter:val})
-  }
-  render(){
-    let filtered = this.state.contacts.filter(o=>this.isOkayObj(o));
+  render() {
+    const { images, q, modalObj, loading } = this.state;
     return (
-      <>
-        <h2>PhoneBook</h2>
-        <ContactForm add={this.addToContacts}/>
-  
-        <h2>Contacts</h2>
-        <Filter setFilter={this.setFilter}/>
-        <ContactList 
-          contacts={filtered}
-          remove={this.removeFromContacts}
-        />
-      </>
+      <div className='App'>
+        <Searchbar set={this.setSearch}></Searchbar>
+        <ImageGallery images={images} openModal={this.openModal}></ImageGallery>
+        {loading? (<Loader></Loader>) : images.length > 0 ? (
+          <Button action={this.nextPage}></Button>
+        ) : q == '' ? (
+          'Write your promt to begin searching'
+        ) : (
+          'Nothing was found by your request'
+        )}
+        
+        {modalObj!=undefined?<Modal img = {modalObj} close={this.openModal}></Modal>:""}
+      </div>
     );
   }
-
-};
+}
