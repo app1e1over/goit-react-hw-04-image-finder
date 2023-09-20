@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import "./style.css"
 
@@ -8,11 +8,11 @@ const Modal=(props)=> {
         this.props.close();
       }
     }
-  const listenerId=document.body.addEventListener("keyup", handleKeyUp);
-
+  const [listenerId, setListenerId]=useState();
+    setListenerId(document.body.addEventListener("keyup", handleKeyUp))
     useEffect(()=>{
       document.removeEventListener(document.body, listenerId);
-    }, [])
+    }, [listenerId])
  
     const {img, close} = props;
     return (
