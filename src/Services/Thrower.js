@@ -3,7 +3,7 @@ import axios from 'axios';
 const key = '38473838-e891e831f166f48f183183908';
 
 export const load = st => {
-  if (st === undefined || st.loading || st.q==="") {
+  if (st === undefined || st.q==="") {
     console.log('no load');
     return;
   }

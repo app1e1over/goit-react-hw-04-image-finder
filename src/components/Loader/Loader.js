@@ -1,14 +1,8 @@
-import React, { Component } from 'react';
-import "./style.css"
+import React from 'react';
+import './style.css';
 
-
-class Loader extends Component {
-    render() {
-        return (
-            <div className='loader'>
-            </div>
-        );
-    }
-}
+const Loader = () => {
+  return <div className="loader"></div>;
+};
 
 export default Loader;

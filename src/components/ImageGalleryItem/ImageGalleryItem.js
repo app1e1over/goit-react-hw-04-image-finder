@@ -1,15 +1,15 @@
-import React, { Component } from 'react';
+import React from 'react';
 import "./style.css";
 import PropTypes from 'prop-types';
 
-class ImageGalleryItem extends Component {
-  click=()=>{
-    this.props.openModal(this.props.image);
+const ImageGalleryItem = (props)=> {
+  const click=()=>{
+    props.openModal(props.image);
   }
-  render() {
-    const{image}=this.props;
+   {
+    const{image}=props;
     return (
-      <li className="ImageGalleryItem" onClick={this.click}>
+      <li className="ImageGalleryItem" onClick={click}>
         <img className='ImageGalleryItem-image' src={image.largeImageURL} alt={image.tags} />
       </li>
     );

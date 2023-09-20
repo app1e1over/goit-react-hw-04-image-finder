@@ -1,25 +1,20 @@
-import React, { Component } from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import "./style.css"
 
-class Modal extends Component {
-    constructor(props){
-        super(props);
-        this.state={
-            visible:false
-        }
-        this.listenerId=document.body.addEventListener("keyup", this.handleKeyUp);
-    }
-    handleKeyUp=(e)=>{
+const Modal=(props)=> {
+    const handleKeyUp=(e)=>{
       if(e.key==="Escape"){
         this.props.close();
       }
     }
-    componentWillUnmount(){
-      document.removeEventListener(document.body, this.listenerId);
-    }
-  render() {
-    const {img, close} = this.props;
+  const listenerId=document.body.addEventListener("keyup", handleKeyUp);
+
+    useEffect(()=>{
+      document.removeEventListener(document.body, listenerId);
+    }, [])
+ 
+    const {img, close} = props;
     return (
       <div className="overlay" onClick={()=>close()}>
         <div className="modal">
@@ -27,7 +22,7 @@ class Modal extends Component {
         </div>
       </div>
     );
-  }
+  
 }
 
 Modal.propTypes = {

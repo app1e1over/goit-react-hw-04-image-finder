@@ -1,12 +1,12 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import ImageGalleryItem from 'components/ImageGalleryItem/ImageGalleryItem';
 import { nanoid } from 'nanoid';
 import './style.css';
 
-class ImageGallery extends Component {
-  render() {
-    const { images, openModal } = this.props;
+const ImageGallery =(props)=>{
+  
+    const { images, openModal } = props;
     let str = images.flatMap(img => (
       <ImageGalleryItem
         openModal={openModal}
@@ -21,7 +21,7 @@ class ImageGallery extends Component {
        
       </>
     );
-  }
+  
 }
 
 ImageGallery.propTypes = {

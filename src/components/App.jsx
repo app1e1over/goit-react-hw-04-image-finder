@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import './styles.css';
 import Searchbar from './Searchbar/Searchbar';
 import ImageGallery from './ImageGallery/ImageGallery';
@@ -8,57 +8,58 @@ import Loader from './Loader/Loader';
 import {load} from "./../Services/Thrower";
 import Notification from './Notification/Notification';
 
-export class App extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      images: [],
-      q: '',
-      page: 1,
-      more: false,
-      modalObj: undefined
-    };
-  }
+export const App = ()=>{
 
-  setSearch = val => {
-    if(val!==this.state.q){
-      load({...this.state, q:val, page:1, images:[]}).then(r=>this.setState({...r})).finally(()=>this.setState({loading:false}));
-      this.setState({
-        q: val,
-        page: 1,
-        images: [],
-        loading: true,
-        modalObj:undefined
-      });
+    const [images, setImages] = useState([]);
+    const [q, setQ] = useState("");
+    const [page, setPage] = useState(1);
+    const [more, setMore] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [modalObj, setModalObj] = useState(undefined);
+    
+ 
+  
+
+  const setSearch = val => {
+    if(val!==q){
+      setQ(val);
+      setPage(1);
+      setImages([]);
+      setLoading(true);
+      setModalObj(undefined);
+      load({q:val, page:1, images:[]}).then(r=>{setImages(r.images); setMore(r.more)}).finally(()=>{setLoading(false)});
     }
    
   };
 
 
-  nextPage=()=>{
-    let np = this.state.page+1;
-    load({...this.state, page: np}).then(r=>this.setState({...r})).finally(()=>{this.setState({loading:false}); });
-    this.setState({page:np, loading:true});
+  const nextPage=()=>{
 
-  }
-  openModal=(h)=>{
-    this.setState({modalObj:h})
-  }
+    const np=page+1;
+    setPage(np);
+    setLoading(true);
+    load({q, images, page: np}).then(r=>{setImages(r.images); setMore(r.more)}).finally(()=>{setLoading(false)});
 
 
-  componentDidUpdate(prevProps, prevState) {
-    console.log("hi");
-    if(this.state.modalObj===prevState.modalObj)
-    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })
+
   }
-  render() {
-    const { images, q, modalObj, loading, more } = this.state;
+  const openModal=(h)=>{
+    setModalObj(h);
+  }
+
+
+  // componentDidUpdate(prevProps, prevState) {
+  //   console.log("hi");
+  //   if(state.modalObj===prevState.modalObj)
+  //   window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })
+  // }
+ 
     let displ="";
     if(loading){
       displ=(<Loader></Loader>)
     }else if(images.length>0) {
       if(more){
-        displ=(<Button action={this.nextPage}></Button>)
+        displ=(<Button action={nextPage}></Button>)
       }else{
         displ=(<Notification text={"No more results"} color={"#f44465"}></Notification>)
       }
@@ -70,13 +71,13 @@ export class App extends Component {
     }
     return (
       <div className='App'>
-        <Searchbar set={this.setSearch}></Searchbar>
-        <ImageGallery images={images} openModal={this.openModal}></ImageGallery>
+        <Searchbar set={setSearch}></Searchbar>
+        <ImageGallery images={images} openModal={openModal}></ImageGallery>
         
         {displ}
         
-        {modalObj!==undefined?<Modal img = {modalObj} close={this.openModal}></Modal>:""}
+        {modalObj!==undefined?<Modal img = {modalObj} close={openModal}></Modal>:""}
       </div>
     );
-  }
+  
 }

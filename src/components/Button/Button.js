@@ -1,15 +1,15 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import './style.css'
 
-class Button extends Component {
-    render() {
+const Button =(props)=> {
+
         return (
-            <button onClick={this.props.action} className='Button'>
+            <button onClick={props.action} className='Button'>
                 Load more
             </button>
         );
-    }
+    
 }
 
 Button.propTypes = {
